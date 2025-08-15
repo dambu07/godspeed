@@ -1,0 +1,7 @@
+{
+  "name": "todo-manager",
+  "version": "1.0.0",
+  "description": "Show all TODO and FIXME comments",
+  "main": "index.tsx",
+  "enabled": true
+}

@@ -1,0 +1,7 @@
+{
+  "name": "terminal-console",
+  "version": "1.0.0",
+  "description": "Embedded terminal access",
+  "main": "index.tsx",
+  "enabled": true
+}

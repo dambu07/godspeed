@@ -1,0 +1,7 @@
+{
+  "name": "clipboard-manager",
+  "version": "1.0.0",
+  "description": "Clipboard history and actions",
+  "main": "index.tsx",
+  "enabled": true
+}

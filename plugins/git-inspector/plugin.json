@@ -1,0 +1,7 @@
+{
+  "name": "git-inspector",
+  "version": "1.0.0",
+  "description": "Visual git manager",
+  "main": "index.tsx",
+  "enabled": true
+}

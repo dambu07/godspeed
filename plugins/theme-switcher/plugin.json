@@ -1,0 +1,7 @@
+{
+  "name": "theme-switcher",
+  "version": "1.0.0",
+  "description": "Switch UI themes",
+  "main": "index.tsx",
+  "enabled": true
+}

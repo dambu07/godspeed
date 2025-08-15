@@ -1,0 +1,12 @@
+# Add at beginning of functions that use arrays
+local stacks=()
+local frameworks=()
+local selected=()
+# Add at beginning of functions that use arrays
+local stacks=()
+local frameworks=()
+local selected=()
+# Add at beginning of functions that use arrays
+local stacks=()
+local frameworks=()
+local selected=()

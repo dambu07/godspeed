@@ -1,0 +1,7 @@
+{
+  "name": "ai-chat-assistant",
+  "version": "1.0.0",
+  "description": "Conversational AI assistant",
+  "main": "index.tsx",
+  "enabled": true
+}

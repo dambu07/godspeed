@@ -1,0 +1,18 @@
+
+> musomatic@0.0.0 build
+> ng build
+
+An unhandled exception occurred: The /Users/damarkamraavi/Downloads/musomatico-main/src/environments/environment.ts path in file replacements does not exist.
+See "/private/var/folders/pc/mq22grhs3dg4xr6hx99xctgw0000gn/T/ng-nZtbRG/angular-errors.log" for further details.
+
+> musomatic@0.0.0 build
+> ng build
+
+An unhandled exception occurred: The /Users/damarkamraavi/Downloads/musomatico-main/src/environments/environment.ts path in file replacements does not exist.
+See "/private/var/folders/pc/mq22grhs3dg4xr6hx99xctgw0000gn/T/ng-jADCGi/angular-errors.log" for further details.
+
+> musomatic@0.0.0 build
+> ng build
+
+An unhandled exception occurred: The /Users/damarkamraavi/Downloads/musomatico-main/src/environments/environment.ts path in file replacements does not exist.
+See "/private/var/folders/pc/mq22grhs3dg4xr6hx99xctgw0000gn/T/ng-wOnPR7/angular-errors.log" for further details.

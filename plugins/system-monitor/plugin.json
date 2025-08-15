@@ -1,0 +1,7 @@
+{
+  "name": "system-monitor",
+  "version": "1.0.0",
+  "description": "Real-time CPU, RAM, and network usage dashboard",
+  "main": "index.tsx",
+  "enabled": true
+}

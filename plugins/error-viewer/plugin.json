@@ -1,0 +1,7 @@
+{
+  "name": "error-viewer",
+  "version": "1.0.0",
+  "description": "Live error log tailer",
+  "main": "index.tsx",
+  "enabled": true
+}
