@@ -358,7 +358,7 @@ ai_chat(){ echo "🧠 Godspeed AI — type 'exit' to quit"; local prov=$(select_
 # ═══════════════════════════════════════════════════════════════════════════════
 # PROJECT STACK DETECTION & ANALYSIS
 # ═══════════════════════════════════════════════════════════════════════════════
-detect_stacks(){ local local local local stacks=())))
+detect_stacks(){ local local stacks=())
   check_file package.json && stacks+=(nodejs)
   (check_file requirements.txt || check_file pyproject.toml || check_file Pipfile) && stacks+=(python)
   (check_file composer.json || check_file index.php) && stacks+=(php)
@@ -371,7 +371,7 @@ detect_stacks(){ local local local local stacks=())))
 }
 
 detect_frameworks(){ check_file package.json || return 0
-  local local local local frameworks=())))
+  local local frameworks=())
   grep -q 'react' package.json 2>/dev/null && frameworks+=(react)
   grep -q 'next' package.json 2>/dev/null && frameworks+=(nextjs)
   grep -q 'vue' package.json 2>/dev/null && frameworks+=(vue)
@@ -383,8 +383,8 @@ detect_frameworks(){ check_file package.json || return 0
 analyze_project(){ local project="$(project_name)" stacks frameworks
   # Bash 3.2 compatible array population
   local IFS=$'\n'
-  local local local stacks=()))$(detect_stacks))
-  local local local frameworks=()))$(detect_frameworks))
+  local stacks=()$(detect_stacks))
+  local frameworks=()$(detect_frameworks))
   echo "📊 Project Analysis: $project"
   echo "  Stacks: ${stacks[*]:-none}"
   echo "  Frameworks: ${frameworks[*]:-none}"
@@ -460,7 +460,7 @@ fix_permissions(){
 # ═══════════════════════════════════════════════════════════════════════════════
 # DEPENDENCY RESOLUTION SYSTEM
 # ═══════════════════════════════════════════════════════════════════════════════
-resolve_deps(){ local local local local stacks=()))$(analyze_project))
+resolve_deps(){ local local stacks=()$(analyze_project))
   for stack in "${stacks[@]}"; do
     case "$stack" in
       nodejs) resolve_node;;
@@ -509,7 +509,7 @@ resolve_java(){
 # ═══════════════════════════════════════════════════════════════════════════════
 # INTELLIGENT DEVELOPMENT SERVER LAUNCHER
 # ═══════════════════════════════════════════════════════════════════════════════
-launch_servers(){ local local local local stacks=()))$(analyze_project))
+launch_servers(){ local local stacks=()$(analyze_project))
   start_databases
   for stack in "${stacks[@]}"; do
     case "$stack" in
@@ -724,7 +724,36 @@ list_plugins(){ echo "🔌 Installed Plugins:"
 # ═══════════════════════════════════════════════════════════════════════════════
 # GITHUB INTEGRATION & REPOSITORY SEARCH
 # ═══════════════════════════════════════════════════════════════════════════════
-search_github(){ local query="${*:-$(gs_prompt 'GitHub search keywords' 'awesome react components')}"
+search_github(){ 
+  local search_options=(
+    "🔍 Search by keywords"
+    "🌟 Browse trending repositories"
+    "📂 Search by language"
+    "🏷️ Search by topic"
+  )
+  
+  local search_type=$(gs_single_select "GitHub Search" "How would you like to search?" "${search_options[@]}")
+  local query=""
+  
+  case "$search_type" in
+    *"keywords"*)
+      query=$(gs_prompt 'GitHub search keywords' 'awesome react components')
+      ;;
+    *"trending"*)
+      query="stars:>1000 pushed:>2024-01-01"
+      ;;
+    *"language"*)
+      local languages=("JavaScript" "TypeScript" "Python" "PHP" "Go" "Rust" "Java")
+      local selected_lang=$(gs_single_select "Programming Language" "Choose a language:" "${languages[@]}")
+      query="language:$selected_lang stars:>100"
+      ;;
+    *"topic"*)
+      local topics=("react" "laravel" "fastapi" "flutter" "docker" "kubernetes" "ai" "machine-learning")
+      local selected_topic=$(gs_single_select "Topic" "Choose a topic:" "${topics[@]}")
+      query="topic:$selected_topic stars:>50"
+      ;;
+  esac
+  
   gs_notify "🔍 Searching GitHub: $query"
   local response=$(curl -s -H "Accept: application/vnd.github.v3+json" \
     "https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=10" 2>/dev/null || echo '{"items":[]}')
@@ -736,11 +765,14 @@ search_github(){ local query="${*:-$(gs_prompt 'GitHub search keywords' 'awesome
     echo "Install jq for formatted results"
   fi
   
-  local repo=$(gs_prompt "Repository to import (user/repo) or skip" "skip")
-  [[ "$repo" == "skip" || -z "$repo" ]] && return
-  local import_dir="imported-repos/$(basename "$repo")"
-  mkdir -p imported-repos
-  git clone --depth=1 "https://github.com/$repo.git" "$import_dir" && gs_notify "✅ Imported: $repo → $import_dir"
+  if gs_confirm_enhanced "Import Repository" "Would you like to import one of these repositories?"; then
+    local repo=$(gs_prompt "Repository to import (user/repo)" "")
+    [[ -n "$repo" ]] && {
+      local import_dir="imported-repos/$(basename "$repo")"
+      mkdir -p imported-repos
+      git clone --depth=1 "https://github.com/$repo.git" "$import_dir" && gs_notify "✅ Imported: $repo → $import_dir"
+    }
+  fi
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -798,7 +830,7 @@ autopilot_code(){ local task="${*:-$(gs_prompt 'Describe coding task' 'Add dark 
   }
 }
 
-# ═══════════════════════════════════════════════════════════════════════════════
+ ═══════════════════════════════════════════════════════════════════════════════
 # BUILD SYSTEM & DEPLOYMENT AUTOMATION
 # ═══════════════════════════════════════════════════════════════════════════════
 smart_build(){ gs_notify "⚡ Smart build initiated"
@@ -820,25 +852,57 @@ smart_build(){ gs_notify "⚡ Smart build initiated"
   gs_notify "✅ Build completed successfully"
 }
 
-deploy_project(){ local platform=$(gs_prompt "Platform (vercel|netlify|docker|manual)" "vercel")
+deploy_project(){ 
+  local deployment_options=(
+    "🚀 Vercel (Frontend apps)"
+    "🌐 Netlify (Static sites)"
+    "🐳 Docker (Containerized apps)"
+    "☁️ AWS (Enterprise scale)"
+    "📋 Manual (Custom hosting)"
+  )
+  
+  local platform=$(gs_single_select "Deployment Platform" "Where would you like to deploy?" "${deployment_options[@]}")
+  
   case "$platform" in
-    vercel) command -v vercel >/dev/null || npm i -g vercel; vercel --prod;;
-    netlify) command -v netlify >/dev/null || npm i -g netlify-cli; netlify deploy --prod;;
-    docker) check_file Dockerfile && { docker build -t "$(project_name)" .; gs_notify "✅ Docker image built"; } || gs_notify "❌ No Dockerfile";;
-    manual) cat > deploy.md <<'EOF'
+    *"Vercel"*)
+      command -v vercel >/dev/null || npm i -g vercel
+      vercel --prod
+      ;;
+    *"Netlify"*)
+      command -v netlify >/dev/null || npm i -g netlify-cli
+      netlify deploy --prod
+      ;;
+    *"Docker"*)
+      if check_file Dockerfile; then
+        docker build -t "$(project_name)" .
+        gs_notify "✅ Docker image built: $(project_name)"
+      else
+        gs_notify "❌ No Dockerfile found"
+      fi
+      ;;
+    *"AWS"*)
+      command -v aws >/dev/null || { gs_notify "Install AWS CLI first"; return 1; }
+      gs_notify "Configure AWS deployment in your CI/CD pipeline"
+      ;;
+    *"Manual"*)
+      cat > deploy.md <<'EOF'
 # Deployment Guide
-
 ## Build
 npm run build
 or
 composer install –optimize-autoloader –no-dev
-
 
 ## Upload
 Upload `dist/`, `build/`, or `public/` to your hosting provider.
 
 ## Environment
 Set environment variables from `.env` in your hosting dashboard.
+
+## Database
+Run migrations if applicable:
+php artisan migrate
+or
+python manage.py migrate
 EOF
       gs_notify "✅ Manual deployment guide created: deploy.md";;
   esac
@@ -983,7 +1047,10 @@ install_minimal_dev(){
 }
 
 install_custom_dev(){
-  local tools=$(gs_prompt "Install which tools? (node,python,php,go,rust,java,mobile,cloud,docker)" "node,python,php")
+  local tool_choices=("node" "python" "php" "go" "rust" "java" "mobile" "cloud" "docker")
+mapfile -t langs < <(gs_tick_select "Which tools to install?" "${tool_choices[@]}")
+[[ ${#langs[@]} -eq 0 ]] && { echo "[Godspeed] Cancelled. Returning to Godspeed menu."; return 0; }
+
   IFS=',' read -ra selected <<< "$tools"
   
   install_system_prerequisites
@@ -1398,23 +1465,24 @@ check_command(){
 }
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# PROJECT TEMPLATE SYSTEM
+# PROJECT TEMPLATE SYSTEM WITH TICK SELECTION
 # ═══════════════════════════════════════════════════════════════════════════════
 create_template(){
   clear
   echo "🎯 Godspeed Project Templates"
   
-  # Template categories
+  # Template categories with tick system
   local template_categories=(
     "⚛️ Frontend (React, Vue, Next.js, Angular)"
     "🐘 Backend (Laravel, FastAPI, Express, Django)"
     "📱 Mobile (Flutter, React Native)"
     "🔗 Full-Stack (Complete applications)"
-    "🎮 Specialized (Game dev, ML, etc.)"
+    "🎮 Specialized (Static sites, APIs, etc.)"
   )
   
   local category=$(gs_single_select "Template Category" "Choose a project category:" "${template_categories[@]}")
   
+  local selected_template=""
   case "$category" in
     *"Frontend"*)
       local frontend_templates=(
@@ -1425,7 +1493,7 @@ create_template(){
         "⚡ Vite + React + TypeScript"
         "🎨 Static HTML + Tailwind CSS"
       )
-      local selected_template=$(gs_single_select "Frontend Template" "Choose a frontend template:" "${frontend_templates[@]}")
+      selected_template=$(gs_single_select "Frontend Template" "Choose a frontend template:" "${frontend_templates[@]}")
       ;;
     *"Backend"*)
       local backend_templates=(
@@ -1436,7 +1504,7 @@ create_template(){
         "🔵 Go + Gin + GORM"
         "🦀 Rust + Actix + Diesel"
       )
-      local selected_template=$(gs_single_select "Backend Template" "Choose a backend template:" "${backend_templates[@]}")
+      selected_template=$(gs_single_select "Backend Template" "Choose a backend template:" "${backend_templates[@]}")
       ;;
     *"Mobile"*)
       local mobile_templates=(
@@ -1445,7 +1513,7 @@ create_template(){
         "🍎 iOS Native (Swift)"
         "🤖 Android Native (Kotlin)"
       )
-      local selected_template=$(gs_single_select "Mobile Template" "Choose a mobile template:" "${mobile_templates[@]}")
+      selected_template=$(gs_single_select "Mobile Template" "Choose a mobile template:" "${mobile_templates[@]}")
       ;;
     *"Full-Stack"*)
       local fullstack_templates=(
@@ -1456,14 +1524,24 @@ create_template(){
         "🎯 MERN Stack (MongoDB + Express + React + Node)"
         "🐘 TALL Stack (Tailwind + Alpine + Laravel + Livewire)"
       )
-      local selected_template=$(gs_single_select "Full-Stack Template" "Choose a full-stack template:" "${fullstack_templates[@]}")
+      selected_template=$(gs_single_select "Full-Stack Template" "Choose a full-stack template:" "${fullstack_templates[@]}")
+      ;;
+    *"Specialized"*)
+      local specialized_templates=(
+        "🌐 Static Blog (11ty + Tailwind)"
+        "🔧 REST API (Express + Swagger)"
+        "📊 Data Dashboard (React + D3.js)"
+        "🎮 Game Dev (Unity + C#)"
+        "🤖 ML Project (Python + Jupyter)"
+      )
+      selected_template=$(gs_single_select "Specialized Template" "Choose a specialized template:" "${specialized_templates[@]}")
       ;;
   esac
   
   # Get project name
   local project_name=$(gs_prompt "Project Name" "Enter your project name" "my-awesome-project")
   
-  # Additional options
+  # Additional options with tick system
   local additional_options=(
     "🐳 Include Docker configuration"
     "🚀 Setup CI/CD (GitHub Actions)"
@@ -1473,11 +1551,175 @@ create_template(){
     "📝 Generate documentation"
   )
   
-  local selected_options=($(gs_multi_select "Additional Features" "Select additional features to include:" "${additional_options[@]}"))
+  mapfile -t selected_options < <(gs_multi_select "Additional Features" "Select additional features to include:" "${additional_options[@]}")
   
   # Create project with selected template and options
   execute_template_creation "$selected_template" "$project_name" "${selected_options[@]}"
 }
+
+execute_template_creation(){
+  local template="$1" project_name="$2"
+  shift 2
+  local options=("$@")
+  
+  gs_notify "🚀 Creating project: $project_name"
+  mkdir -p "$project_name" && cd "$project_name" || return 1
+  
+  # Create project based on template
+  case "$template" in
+    *"React + TypeScript"*)
+      npx create-react-app . --template typescript
+      npm install tailwindcss @headlessui/react @heroicons/react
+      ;;
+    *"Next.js"*)
+      npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
+      ;;
+    *"Vue 3"*)
+      npm create vue@latest . -- --typescript --pwa --vitest --cypress
+      ;;
+    *"Angular"*)
+      npx @angular/cli new . --routing --style=scss --package-manager=npm
+      ;;
+    *"Laravel"*)
+      composer create-project laravel/laravel . || curl -s "https://laravel.build/$project_name" | bash
+      ;;
+    *"FastAPI"*)
+      python3 -m venv venv && source venv/bin/activate
+      pip install fastapi uvicorn[standard] sqlalchemy alembic
+      mkdir -p app/{api,models,schemas}
+      cat > app/main.py <<'EOF'
+from fastapi import FastAPI
+app = FastAPI(title="Godspeed API", version="1.0.0")
+
+@app.get("/")
+async def root():
+    return {"message": "Hello from Godspeed!", "status": "active"}
+EOF
+      ;;
+    *"Flutter"*)
+      flutter create . --project-name="$project_name"
+      ;;
+    *"MERN Stack"*)
+      mkdir -p {frontend,backend}
+      cd frontend && npx create-react-app . --template typescript && cd ..
+      cd backend && npm init -y && npm install express mongoose dotenv cors && cd ..
+      ;;
+  esac
+  
+  # Add selected options
+  for option in "${options[@]}"; do
+    case "$option" in
+      *"Docker"*) create_docker_config;;
+      *"CI/CD"*) create_github_actions;;
+      *"authentication"*) setup_auth_system;;
+      *"testing"*) setup_testing;;
+      *"documentation"*) create_documentation;;
+    esac
+  done
+  
+  # Setup environment and configs
+  setup_env
+  setup_configs
+  setup_dirs
+  
+  gs_notify "✅ Project '$project_name' created successfully!"
+  echo "Next steps:"
+  echo "  cd $project_name"
+  echo "  godspeed install"
+  echo "  godspeed go"
+}
+
+create_docker_config(){
+  cat > Dockerfile <<'EOF'
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 4000
+CMD ["npm", "start"]
+EOF
+
+  cat > docker-compose.yml <<'EOF'
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+EOF
+}
+
+create_github_actions(){
+  mkdir -p .github/workflows
+  cat > .github/workflows/ci.yml <<'EOF'
+name: CI/CD Pipeline
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm install
+      - run: npm test
+      - run: npm run build
+EOF
+}
+
+setup_auth_system(){
+  if check_file package.json; then
+    npm install next-auth bcryptjs jsonwebtoken
+  elif check_file composer.json; then
+    composer require laravel/sanctum
+  fi
+}
+
+setup_testing(){
+  if check_file package.json; then
+    npm install --save-dev jest @testing-library/react @testing-library/jest-dom
+  elif check_file requirements.txt; then
+    echo "pytest" >> requirements.txt
+  fi
+}
+
+create_documentation(){
+  cat > README.md <<EOF
+# $project_name
+
+Created with Godspeed v0.7
+
+## Features
+- Modern development setup
+- Automated tooling
+- Production-ready configuration
+
+## Quick Start
+\`\`\`bash
+godspeed install
+godspeed go
+\`\`\`
+
+## Development
+\`\`\`bash
+godspeed ai chat      # Get AI assistance
+godspeed build        # Build for production
+godspeed deploy       # Deploy to cloud
+\`\`\`
+EOF
+}
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN COMMAND HANDLER & AUTOMATION
@@ -1530,7 +1772,7 @@ main_help(){ cat <<'EOF'
   godspeed autopilot "add dark mode"   # AI code generation  
   godspeed doctor                      # Check system status
 
-For more help: https://github.com/godspeed-ai/godspeed
+For more help: https://github.com/dambu07/godspeed
 EOF
 }
 
@@ -1555,7 +1797,7 @@ main(){ init_dirs; detect_os
     session|share) share_session;;
     plugins) list_plugins;;
     # ADD THESE LINES:
-    setup-global|install-global) install_global_dev_environment;;
+    setup-global|install-global) godspeed_install_global_tools;;
     doctor|check) run_system_check;;
     help|--help|-h|*) main_help;;
   esac
