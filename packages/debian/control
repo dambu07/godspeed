@@ -1,0 +1,10 @@
+Package: godspeed
+Version: 0.7.0
+Section: utils
+Priority: optional
+Architecture: all
+Depends: bash (>= 4.0), git, curl, jq
+Maintainer: Godspeed Team <maintainer@godspeed.sh>
+Description: Ultimate Full-Stack Development Environment
+ Godspeed is an AI-powered development environment that sets up
+ your entire tech stack in minutes.

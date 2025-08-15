@@ -1,0 +1,45 @@
+{
+  "name": "godspeed",
+  "version": "0.7.0",
+  "description": "Ultimate Full-Stack Development Environment with AI Integration",
+  "main": "godspeed.sh",
+  "scripts": {
+    "test": "./test/run-tests.sh",
+    "test:install": "./test/test-installation.sh",
+    "test:templates": "./test/test-templates.sh",
+    "test:ai": "./test/test-ai-integration.sh",
+    "lint": "shellcheck godspeed.sh scripts/*.sh",
+    "build": "./scripts/setup-repo.sh",
+    "release": "./scripts/release.sh",
+    "deploy": "./scripts/deploy.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dambu07/godspeed.git"
+  },
+  "keywords": [
+    "development",
+    "environment",
+    "ai",
+    "automation",
+    "devops",
+    "templates",
+    "cross-platform"
+  ],
+  "author": "Godspeed Development Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dambu07/godspeed/issues"
+  },
+  "homepage": "https://github.com/dambu07/godspeed#readme",
+  "engines": {
+    "bash": ">=4.0"
+  },
+  "devDependencies": {
+    "shellcheck": "^0.8.0"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/dambu07"
+  }
+}

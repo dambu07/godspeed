@@ -1,0 +1,52 @@
+# Godspeed specific
+.gs_memory
+.gs_apikeys
+logs/
+dist/
+*.log
+
+# Development
+node_modules/
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+build/
+dist/
+*.tar.gz
+*.deb
+*.rpm
+*.snap
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+
+# Test artifacts
+test-projects/
+coverage/
+.nyc_output/
+
+# Package managers
+package-lock.json
+yarn.lock
+composer.lock
+Pipfile.lock
